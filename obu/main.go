@@ -1,19 +1,19 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"math"
 	"math/rand"
 	"time"
+
+	"github.com/gorilla/websocket"
+
+	"github.com/bozkayasalihx/paid_road/types"
 )
 
 var sendInternal = time.Second * 2
 
-type OBUData struct {
-	ID   int     `json:"id"`
-	Lat  float64 `json:"lat"`
-	Long float64 `json:"long"`
-}
+const wsEndpoint = "ws://localhost:3000/ws"
 
 func genLatLong() (float64, float64) {
 	return genCoord(), genCoord()
@@ -40,14 +40,22 @@ func init() {
 
 func main() {
 	OBUIDS := genOBUIDS(20)
+	conn, _, err := websocket.DefaultDialer.Dial(wsEndpoint, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	for {
 		for i := 0; i < len(OBUIDS); i++ {
-			obu := OBUData{
+			obu := types.OBUData{
 				ID:   OBUIDS[i],
 				Long: genCoord(),
 				Lat:  genCoord(),
 			}
-			fmt.Printf("new obu data [%d] <<Lat :: %v :: Long :: %v>>\n", obu.ID, obu.Lat, obu.Long)
+			if err := conn.WriteJSON(obu); err != nil {
+				log.Printf("couldn't write to websocket %v", err)
+				continue
+			}
 		}
 		time.Sleep(sendInternal)
 	}
