@@ -10,12 +10,6 @@ import (
 	"github.com/bozkayasalihx/paid_road/types"
 )
 
-const (
-	wsEndpoint    = ":3000"
-	kafkaTopic    = "test-topic"
-	kafkaEndpoint = "localhost:9092"
-)
-
 type DataRecv struct {
 	msgch    chan types.OBUData
 	wsConn   *websocket.Conn
@@ -23,24 +17,25 @@ type DataRecv struct {
 }
 
 func NewDataRecv() (*DataRecv, error) {
-  var (
-    prod DataProducer
-    err error
-  )
+	var (
+		prod DataProducer
+		err  error
+	)
 	prod, err = NewDataProducer()
 	if err != nil {
 		return nil, err
 	}
-  
-  prod = NewLoggingMiddleware(prod)
-  
+
+	prod = NewLoggingMiddleware(prod)
+
 	return &DataRecv{
 		msgch:    make(chan types.OBUData, 128),
-		Producer: l.next,
+		Producer: prod,
 	}, nil
 }
 
 func main() {
+	config := types.NewConfig()
 	recv, err := NewDataRecv()
 	if err != nil {
 		log.Fatal(err)
@@ -49,7 +44,7 @@ func main() {
 
 	fmt.Println("data recv working...")
 
-	http.ListenAndServe(wsEndpoint, nil)
+	http.ListenAndServe(config.WSEndpoint, nil)
 }
 
 func (dr *DataRecv) produceData(d types.OBUData) error {
@@ -79,8 +74,8 @@ func (dr *DataRecv) wsRecvLoop() {
 			continue
 		}
 		fmt.Printf("new obu data [%d] <<Lat :: %v :: Long :: %v>>\n", data.ID, data.Lat, data.Long)
-		// dr.msgch <- data
 		if err := dr.produceData(data); err != nil {
 			log.Fatal(err)
 		}
 	}
+}
