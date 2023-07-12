@@ -6,5 +6,9 @@ recv:
 	@go build -o bin/recv ./recv
 	@bin/recv
 
-.PHONY: obu recv
+calc: 
+	@go build -o bin/calculator ./distance-calculator
+	@bin/calculator
+
+.PHONY: obu recv calc
 
