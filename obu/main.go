@@ -11,13 +11,9 @@ import (
 	"github.com/bozkayasalihx/paid_road/types"
 )
 
-var sendInternal = time.Second * 2
+var sendInternal = time.Second * 5
 
 const wsEndpoint = "ws://localhost:3000/ws"
-
-func genLatLong() (float64, float64) {
-	return genCoord(), genCoord()
-}
 
 func genCoord() float64 {
 	n := float64((rand.Intn(100) + 1))
