@@ -35,5 +35,3 @@ services:
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
     depends_on:
       - zoo1
-
-
