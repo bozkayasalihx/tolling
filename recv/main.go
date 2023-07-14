@@ -21,7 +21,7 @@ func NewDataRecv() (*DataRecv, error) {
 		prod DataProducer
 		err  error
 	)
-	prod, err = NewDataProducer()
+	prod, err = NewKafkaDataConsumer()
 	if err != nil {
 		return nil, err
 	}

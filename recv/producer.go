@@ -17,7 +17,7 @@ type kafkaDataProducer struct {
 	Conn *kafka.Conn
 }
 
-func NewDataProducer() (DataProducer, error) {
+func NewKafkaDataConsumer() (DataProducer, error) {
 	config := types.NewConfig()
 	conn, err := kafka.DialLeader(context.Background(), "tcp", config.KafkaEndpoint, config.Topic, 0)
 	if err != nil {
