@@ -1,10 +1,10 @@
 package main
 
-type KafkaConsumer struct {
-	Consumer DataConsumer
-}
-
 func main() {
-	consumer := NewKafkaConsumer()
-	consumer.ReadMsgsLoop()
+
+	calcSrv := NewCalculateService()
+	kafkaConsumer := NewKafkaConsumer(calcSrv)
+	calcSrv = NewConsumerLogMiddlware(calcSrv)
+
+	kafkaConsumer.Start()
 }
