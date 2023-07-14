@@ -5,8 +5,6 @@ type KafkaConsumer struct {
 }
 
 func main() {
-	var consumer DataConsumer
-
-	consumer = NewKafkaConsumer()
-	consumer = NewConsumerLogMiddlware(consumer)
+	consumer := NewKafkaConsumer()
+	consumer.ReadMsgsLoop()
 }

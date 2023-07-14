@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"encoding/json"
+	"fmt"
 
 	"github.com/segmentio/kafka-go"
 	"github.com/sirupsen/logrus"
@@ -16,11 +16,10 @@ type DataConsumer interface {
 
 type KafkaDataConsumer struct {
 	Reader    *kafka.Reader
-	Consumer  DataConsumer
 	isRunning bool
 }
 
-func NewKafkaConsumer() DataConsumer {
+func NewKafkaConsumer() *KafkaDataConsumer {
 	config := types.NewConfig()
 
 	r := kafka.NewReader(kafka.ReaderConfig{
@@ -36,7 +35,7 @@ func NewKafkaConsumer() DataConsumer {
 }
 
 func (c *KafkaDataConsumer) ConsumeData(d types.OBUData) error {
-	return c.Consumer.ConsumeData(d)
+	return nil
 }
 
 // NOTE; making new  other method compatiable;
@@ -50,14 +49,17 @@ func (c *KafkaDataConsumer) ReadMsgsLoop() {
 			}).Info("couldn't read msgs")
 			continue
 		}
-		var d types.OBUData
-		if err := json.Unmarshal(msg.Value, &d); err != nil {
-			logrus.Fatalf("couldn't parse msgs: %v", err)
-			break
-		}
-		if err = c.ConsumeData(d); err != nil {
-			logrus.Fatal(err)
-			break
-		}
+
+		fmt.Println("the msg: ", string(msg.Value))
+
+		// var d types.OBUData
+		// if err := json.Unmarshal(msg.Value, &d); err != nil {
+		// 	logrus.Fatalf("couldn't parse msgs: %v", err)
+		// 	break
+		// }
+		// if err = c.ConsumeData(d); err != nil {
+		// 	logrus.Fatal(err)
+		// 	break
+		// }
 	}
 }
