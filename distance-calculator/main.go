@@ -1,10 +1,13 @@
 package main
 
 func main() {
+	var (
+		calcSrv CalculateServicer
+	)
 
-	calcSrv := NewCalculateService()
-	kafkaConsumer := NewKafkaConsumer(calcSrv)
+	calcSrv = NewCalculateService()
 	calcSrv = NewConsumerLogMiddlware(calcSrv)
+	kafkaConsumer := NewKafkaConsumer(calcSrv)
 
 	kafkaConsumer.Start()
 }

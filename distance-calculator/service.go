@@ -35,7 +35,7 @@ func (s *CalculateService) CalculateDistance(data types.OBUData) (float64, error
 
 func calcDistance(Coords []float64) (float64, error) {
 	if len(Coords) > 4 {
-		return 0.0, errors.New("Too many arguments")
+		return 0.0, errors.New("too many arguments")
 	}
 	/// data {
 	//  Long, Lat, Long, Lat

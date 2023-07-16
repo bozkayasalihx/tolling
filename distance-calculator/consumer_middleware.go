@@ -1,6 +1,11 @@
 package main
 
-import "github.com/bozkayasalihx/paid_road/types"
+import (
+	"time"
+
+	"github.com/bozkayasalihx/paid_road/types"
+	"github.com/sirupsen/logrus"
+)
 
 type ConsumerLogMiddlware struct {
 	next CalculateServicer
@@ -13,5 +18,14 @@ func NewConsumerLogMiddlware(srv CalculateServicer) CalculateServicer {
 }
 
 func (c *ConsumerLogMiddlware) CalculateDistance(d types.OBUData) (dist float64, err error) {
-	return 0.0, nil
+	defer func(start time.Time) {
+		logrus.WithFields(logrus.Fields{
+			"took": time.Since(start),
+			"dist": dist,
+			"err":  err,
+		}).Info("consume data")
+	}(time.Now())
+
+	dist, err = c.next.CalculateDistance(d)
+	return
 }

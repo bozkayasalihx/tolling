@@ -2,8 +2,9 @@ package main
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
+	"log"
+
+	"github.com/goccy/go-json"
 
 	"github.com/segmentio/kafka-go"
 	"github.com/sirupsen/logrus"
@@ -56,7 +57,11 @@ func (c *KafkaDataConsumer) ReadMsgsLoop() {
 			break
 		}
 		// NOTE: consume data from  serialization
-		dist, err := c.CalculateService.CalculateDistance(d)
-		fmt.Println(dist)
+		distance, err := c.CalculateService.CalculateDistance(d)
+		if err != nil {
+			log.Fatalf("Couldn't calculate distance: %v", err)
+		}
+		_ = distance
+
 	}
 }
