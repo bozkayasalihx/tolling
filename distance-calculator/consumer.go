@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"log"
+
+	"github.com/goccy/go-json"
 
 	"github.com/segmentio/kafka-go"
 	"github.com/sirupsen/logrus"
@@ -10,16 +12,13 @@ import (
 	"github.com/bozkayasalihx/paid_road/types"
 )
 
-type DataConsumer interface {
-	ConsumeData(types.OBUData) error
-}
-
 type KafkaDataConsumer struct {
-	Reader    *kafka.Reader
-	isRunning bool
+	Reader           *kafka.Reader
+	CalculateService CalculateServicer
+	isRunning        bool
 }
 
-func NewKafkaConsumer() *KafkaDataConsumer {
+func NewKafkaConsumer(srv CalculateServicer) *KafkaDataConsumer {
 	config := types.NewConfig()
 
 	r := kafka.NewReader(kafka.ReaderConfig{
@@ -30,18 +29,20 @@ func NewKafkaConsumer() *KafkaDataConsumer {
 	})
 
 	return &KafkaDataConsumer{
-		Reader: r,
+		Reader:           r,
+		CalculateService: srv,
 	}
 }
 
-func (c *KafkaDataConsumer) ConsumeData(d types.OBUData) error {
-	return nil
+func (c *KafkaDataConsumer) Start() {
+	c.isRunning = true
+	c.ReadMsgsLoop()
 }
 
 // NOTE; making new  other method compatiable;
 func (c *KafkaDataConsumer) ReadMsgsLoop() {
 	logrus.Info("Reading messsages")
-	for {
+	for c.isRunning {
 		msg, err := c.Reader.ReadMessage(context.Background())
 		if err != nil {
 			logrus.WithFields(logrus.Fields{
@@ -50,16 +51,17 @@ func (c *KafkaDataConsumer) ReadMsgsLoop() {
 			continue
 		}
 
-		fmt.Println("the msg: ", string(msg.Value))
+		var d types.OBUData
+		if err := json.Unmarshal(msg.Value, &d); err != nil {
+			logrus.Error(err)
+			break
+		}
+		// NOTE: consume data from  serialization
+		distance, err := c.CalculateService.CalculateDistance(d)
+		if err != nil {
+			log.Fatalf("Couldn't calculate distance: %v", err)
+		}
+		_ = distance
 
-		// var d types.OBUData
-		// if err := json.Unmarshal(msg.Value, &d); err != nil {
-		// 	logrus.Fatalf("couldn't parse msgs: %v", err)
-		// 	break
-		// }
-		// if err = c.ConsumeData(d); err != nil {
-		// 	logrus.Fatal(err)
-		// 	break
-		// }
 	}
 }

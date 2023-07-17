@@ -1,5 +1,7 @@
 package types
 
+import "time"
+
 type Config struct {
 	WSEndpoint    string
 	Topic         string
@@ -12,6 +14,12 @@ func NewConfig() *Config {
 		Topic:         "test-topic",
 		KafkaEndpoint: "localhost:9092",
 	}
+}
+
+type Invoice struct {
+	ID            int       `json:"id"`
+	TotalDistance float64   `json:"totaldistance"`
+	Unix          time.Time `json:"unix"`
 }
 
 type OBUData struct {

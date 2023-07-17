@@ -73,7 +73,6 @@ func (dr *DataRecv) wsRecvLoop() {
 			log.Println("got errr: ", err)
 			continue
 		}
-		fmt.Printf("new obu data [%d] <<Lat :: %v :: Long :: %v>>\n", data.ID, data.Lat, data.Long)
 		if err := dr.produceData(data); err != nil {
 			log.Fatal(err)
 		}
