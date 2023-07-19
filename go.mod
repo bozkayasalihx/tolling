@@ -9,6 +9,7 @@ require (
 )
 
 require (
+	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/klauspost/compress v1.15.9 // indirect
 	github.com/pierrec/lz4/v4 v4.1.15 // indirect
 	golang.org/x/sys v0.5.0 // indirect
