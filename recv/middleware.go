@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/bozkayasalihx/paid_road/types"
 	"github.com/sirupsen/logrus"
+
+	"github.com/bozkayasalihx/paid_road/types"
 )
 
 type LoggingMiddleware struct {

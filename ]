@@ -9,18 +9,17 @@ import (
 	"github.com/segmentio/kafka-go"
 	"github.com/sirupsen/logrus"
 
-	"github.com/bozkayasalihx/paid_road/aggr"
 	"github.com/bozkayasalihx/paid_road/types"
 )
 
 type KafkaDataConsumer struct {
 	Reader       *kafka.Reader
 	CalculateSrv CalculateServicer
-	DistSrv      aggr.AggrServicer
+	DistSrv      AggrServicer
 	isRunning    bool
 }
 
-func NewKafkaConsumer(calcSrv CalculateServicer, aggrSrv aggr.AggrServicer) *KafkaDataConsumer {
+func NewKafkaConsumer(calcSrv CalculateServicer, aggrSrv AggrServicer) *KafkaDataConsumer {
 	config := types.NewConfig()
 
 	r := kafka.NewReader(kafka.ReaderConfig{

@@ -10,5 +10,9 @@ calc:
 	@go build -o bin/calculator ./distance-calculator
 	@bin/calculator
 
-.PHONY: obu recv calc
+aggr: 
+	@go build -o bin/aggr ./aggr
+	@bin/aggr
+
+.PHONY: obu recv calc aggr
 

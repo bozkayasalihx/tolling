@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	"github.com/goccy/go-json"
 
+	"github.com/goccy/go-json"
 	"github.com/segmentio/kafka-go"
 
 	"github.com/bozkayasalihx/paid_road/types"
@@ -19,7 +19,13 @@ type kafkaDataProducer struct {
 
 func NewKafkaDataConsumer() (DataProducer, error) {
 	config := types.NewConfig()
-	conn, err := kafka.DialLeader(context.Background(), "tcp", config.KafkaEndpoint, config.Topic, 0)
+	conn, err := kafka.DialLeader(
+		context.Background(),
+		"tcp",
+		config.KafkaEndpoint,
+		config.Topic,
+		0,
+	)
 	if err != nil {
 		return nil, err
 	}
